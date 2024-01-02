@@ -1,0 +1,89 @@
+Intuition
+When you have to minimise/maximise, there's a very high chance you can binary search on the answer. Here if we know a number X provides us enough numbers to fulfill both conditions, then we can simply look for a number smaller than X which might satisfy the condition, if not we will look for a larger number. Now the question is to just check if a number X satisfies the condition or not.
+
+Approach
+Now to check if a number X satisfies the condition or not, we will first calculate how many numbers are there from 1...X that are divisible by divisor1 and divisor2. We can find out this by dividing X by divisor1, i.e. divisibleByD1 = X / divisor1. Then we can do the same for divisor2, i.e. divisibleByD2 = X / divisor2. Now the number of integers that we can add to the first array are elements1 = X - divisibleByD1 and number of elements we can add to the second array are elements2 = X - divisibleByD2. If you notice here there might be an overlap. For e.g. divisor1 = 4 and divisor2 = 6 and X = 13. Here divisibleByD1 = 3 { 4, 8, 12 } and divisibleByD2 = 2 { 6, 12 }. These are the elements that we cannot use in either array1 or array2. But there's an overlap of 12 which we can't use in either of the arrays but we've calulated it twice. To solve this, we will also calulate the number of elements divible by both divisor1 and divisor2 (which is number of elements divisble by lcm(divisor1, divisor2)) (this finds out the overlapping elements). Now X will satisfy the condition if uniqueCnt1 <= elements1 && uniqueCnt2 <= elements2 && uniqueCnt1 + uniqueCnt2 <= X - (X / LCM).
+
+Complexity
+Time complexity: log2(INT_MAX)log_2(INT\_MAX)log 
+2
+​
+ (INT_MAX) + log2(a+b)log_2(a + b)log 
+2
+​
+ (a+b) (to find gcd of two numbers) essentially log2(N)log_2(N)log 
+2
+​
+ (N)
+Space complexity: O(1)
+
+
+question ****
+
+We have two arrays arr1 and arr2 which are initially empty. You need to add positive integers to them such that they satisfy all the following conditions:
+
+arr1 contains uniqueCnt1 distinct positive integers, each of which is not divisible by divisor1.
+arr2 contains uniqueCnt2 distinct positive integers, each of which is not divisible by divisor2.
+No integer is present in both arr1 and arr2.
+Given divisor1, divisor2, uniqueCnt1, and uniqueCnt2, return the minimum possible maximum integer that can be present in either array.
+
+ 
+
+Example 1:
+
+Input: divisor1 = 2, divisor2 = 7, uniqueCnt1 = 1, uniqueCnt2 = 3
+Output: 4
+Explanation: 
+We can distribute the first 4 natural numbers into arr1 and arr2.
+arr1 = [1] and arr2 = [2,3,4].
+We can see that both arrays satisfy all the conditions.
+Since the maximum value is 4, we return it.
+
+
+points to remember :
+
+1. for finding the numbers from one to X how many are dvisible by a is X/a.
+2. if you have a range between from A to B then the numbers divisible by m is given by --
+  if(a%m == 0){return b/m - a/m +1} else {return b/m -a/m};
+
+3.whenever therw is possbility from minimize to maximize from array or vise versa there is highly chance that you should the binary search on that problem
+
+
+solution : 
+
+
+#define ll long long
+class Solution {
+private:
+
+     int gcd(int a, int b) {
+        if (!b) return a;
+        return gcd(b, a % b);
+    }
+    int lcm(ll a, ll b) {
+        ll temp = (a / gcd(a, b)) * b;
+        return temp > INT_MAX ? INT_MAX : temp;
+    }
+public:
+    int minimizeSet(int divisor1, int divisor2, int uniqueCnt1, int uniqueCnt2) {
+        int low = 1;
+        int high = INT_MAX;
+        int ans;
+        int LCM = lcm(divisor1 , divisor2);
+        while(low<=high){
+            int mid = low + (high - low)/2;
+            int a = mid / divisor1;
+            int b = mid/divisor2;
+
+            if(uniqueCnt1 <= mid - a && uniqueCnt2 <= mid-b && uniqueCnt1 + uniqueCnt2 <= (mid - (mid/LCM))){
+                ans = mid;
+                high = mid-1;
+            }
+            else{
+                low = mid+1;
+            }
+        }
+
+        return ans;
+    }
+};
