@@ -1,0 +1,66 @@
+There is an m x n binary grid matrix with all the values set 0 initially. Design an algorithm to randomly pick an index (i, j) where matrix[i][j] == 0 and flips it to 1. All the indices (i, j) where matrix[i][j] == 0 should be equally likely to be returned.
+
+Optimize your algorithm to minimize the number of calls made to the built-in random function of your language and optimize the time and space complexity.
+
+
+
+Input
+["Solution", "flip", "flip", "flip", "reset", "flip"]
+[[3, 1], [], [], [], [], []]
+Output
+[null, [1, 0], [2, 0], [0, 0], null, [2, 0]]
+
+Explanation
+Solution solution = new Solution(3, 1);
+solution.flip();  // return [1, 0], [0,0], [1,0], and [2,0] should be equally likely to be returned.
+solution.flip();  // return [2, 0], Since [1,0] was returned, [2,0] and [0,0]
+solution.flip();  // return [0, 0], Based on the previously returned indices, only [0,0] can be returned.
+solution.reset(); // All the values are reset to 0 and can be returned.
+solution.flip();  // return [2, 0], [0,0], [1,0], and [2,0] should be equally likely to be returned.
+
+
+points : ***
+
+1. we have to be use rand() function for generating random number.
+2. for getting the random row index we have to use random number  % row length and for random colum index random number % col length;
+
+
+Solution**********
+
+class Solution {
+public:
+
+    set<pair<int,int>>st;
+    int row_length ;
+    int col_length ;
+    Solution(int m, int n) {
+        
+        row_length = m;
+        col_length = n;
+    }
+    
+    vector<int> flip() {
+        
+        int x = rand()%row_length;
+        int y = rand()%col_length;
+
+        if(st.find({x,y}) == st.end()){
+            st.insert({x , y});
+            return {x,y};
+        }
+        else{
+            return flip();
+        }
+    }
+    
+    void reset() {
+        st.clear();
+    }
+};
+
+/**
+ * Your Solution object will be instantiated and called as such:
+ * Solution* obj = new Solution(m, n);
+ * vector<int> param_1 = obj->flip();
+ * obj->reset();
+ */
