@@ -1,0 +1,96 @@
+Given a pattern containing only I's and D's. I for increasing and D for decreasing. Devise an algorithm to print the minimum number following that pattern. Digits from 1-9 and digits can't repeat.
+
+Example 1:
+
+Input:
+D
+Output:
+21
+Explanation:
+D is meant for decreasing, so we choose the minimum number among all possible numbers like 21,31,54,87,etc.
+Example 2:
+
+Input:
+IIDDD
+Output:
+126543
+Explanation:
+Above example is self- explanatory,
+1 < 2 < 6 > 5 > 4 > 3
+  I - I - D - D - D
+
+
+  points ***
+
+  1. we should be observe a example 
+  2. according to that we have to swap;
+  3. if d is coming than swap and i is also swap;
+  
+  solution ****
+
+  
+
+  //{ Driver Code Starts
+#include<bits/stdc++.h> 
+using namespace std; 
+
+// } Driver Code Ends
+class Solution{   
+public:
+    string printMinNumberForPattern(string S){
+        // code here 
+        int n = S.size();
+        string ans = "";
+        for(int i=1; i<=n+1 ; i++){
+            ans = ans + to_string(i);
+        }
+        
+        while(true){
+            
+            int j =1;
+            int k = 0;
+            bool flag = false;
+            
+            while(j < ans.size()){
+                
+                if(S[k]=='D' && ans[j] > ans[j-1]){
+                    swap(ans[j] , ans[j-1]);
+                    flag = true;
+                    
+                }
+                else if(S[k]=='I' && ans[j] < ans[j-1]){
+                    swap(ans[j] , ans[j-1]);
+                    flag = true;
+                }
+                
+                j++;
+                k++;
+            }
+            
+            if(flag == false){
+                break;
+            }
+        }
+        
+        return ans;
+        
+    }
+};
+
+
+//{ Driver Code Starts.
+int main() 
+{ 
+    int t;
+    cin>>t;
+    while(t--)
+    {
+        string S;
+        cin >> S;
+        Solution ob;
+        cout << ob.printMinNumberForPattern(S) << endl;
+    }
+    return 0; 
+} 
+
+// } Driver Code Ends
