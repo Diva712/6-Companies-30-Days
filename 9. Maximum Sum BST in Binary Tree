@@ -1,0 +1,65 @@
+Given a binary tree root, return the maximum sum of all keys of any sub-tree which is also a Binary Search Tree (BST).
+
+Assume a BST is defined as follows:
+
+The left subtree of a node contains only nodes with keys less than the node's key.
+The right subtree of a node contains only nodes with keys greater than the node's key.
+Both the left and right subtrees must also be binary search trees.
+ Input: root = [1,4,3,2,4,2,5,null,null,null,null,null,null,4,6]
+Output: 20
+Explanation: Maximum sum in a valid Binary search tree is obtained in root node with key equal to 3.
+
+Points: ****
+
+1. we have to store the three value left value , right value , and sum in a data structure so we implemented a another class for that datastructure.
+2 . when binary tree is not a bst the we will return {min , max , 0};
+2.  when root is null then return {max , min , 0};
+3. at the end return { min(left.minNode , root->value) , max(right.maxNdoe , root->value) , sum };
+
+it is very nice question for the implement wise
+
+class NodeValue{
+public:
+    int minNode , maxNode , maxSum;
+
+    NodeValue(int minNode , int maxNode , int maxSum){
+
+        this->minNode = minNode;
+        this->maxNode = maxNode;
+        this->maxSum = maxSum;
+    }
+};
+class Solution {
+public:
+    NodeValue solve(TreeNode*root , int &result){
+
+        if(root == NULL){
+            return NodeValue(INT_MAX , INT_MIN , 0);
+        }
+
+        auto left = solve(root->left , result);
+        auto right = solve(root->right , result);
+        int sum = 0;
+        if(left.maxNode < root->val && right.minNode > root->val){
+
+            // if BT is BSt;
+            sum = root->val + left.maxSum + right.maxSum;
+            result = max(result , sum);
+            //return NodeValue(min(root->val , left.minNode) , max(root->val , right.maxNode) , sum);
+        }
+        else{
+           return NodeValue(INT_MIN , INT_MAX , 0); 
+        }
+
+        return NodeValue(min(left.minNode , root->val) , max(root->val , right.maxNode) , sum);
+    }
+    int maxSumBST(TreeNode* root) {
+        
+        int result = INT_MIN;
+        solve(root , result);
+        if(result < 0){
+            return 0;
+        }
+        return result;
+    }
+};
