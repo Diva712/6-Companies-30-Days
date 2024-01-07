@@ -1,0 +1,97 @@
+Given an integer array nums of size n, return the minimum number of moves required to make all array elements equal.
+
+In one move, you can increment or decrement an element of the array by 1.
+
+Test cases are designed so that the answer will fit in a 32-bit integer.
+
+ 
+
+Example 1:
+
+Input: nums = [1,2,3]
+Output: 2
+Explanation:
+Only two moves are needed (remember each move increments or decrements one element):
+[1,2,3]  =>  [2,2,3]  =>  [2,2,2]
+Example 2:
+
+Input: nums = [1,10,2,9]
+Output: 16
+
+Solution:
+class Solution {
+public:
+    int minMoves2(vector<int>& nums) {
+        sort(nums.begin() , nums.end());
+        int n = nums.size();
+        int ans = 0;
+        for(int i=0; i<n; i++){
+            ans = ans + abs(nums[i] - nums[n/2]);
+        }
+        return ans;
+
+    }
+};
+
+Developing the Intuition
+
+The basic intutition to develop is we need to return the minimum number of moves required to make all array elements equal. Thus, if median is choosen which is the middle element of the array, the steps required can be reduced.
+
+Thus, we need to find the median of the array and the sum of the steps needed to reach the median for all elements. That will be the required answer.
+
+First Approach - Median
+
+In this approach, we just find the median after sorting the array.
+In case of even, the median is mean of two middle elements i.e., nums[n/2 -1]+nums[n/2])/2
+while in case of odd, we have one single middle number i.e., nums[n/2].
+
+Now, we add the absolute difference of the elements in the array with the median and get our output.
+
+Time Complexity : O(n logn) for sort + O(n) for loop = O(n logn),
+Space complexity : O(1).
+
+Let's see the code:
+
+		// Median Approach
+        int n=nums.size();
+        //Sorting the array
+        sort(nums.begin(),nums.end());
+        //Finding the Median
+        int median= n%2==0? (nums[n/2 -1]+nums[n/2])/2 : nums[n/2];
+        int steps=0;
+        //Calculating the sum of absolute differences
+        for(auto i:nums)
+        {
+            steps+=abs(i-median);
+        }
+        return steps;
+Second Approach - Two Pointers
+As we know that we need to make all the array elements equal, hence after sorting them, when we take a close look, we see that when we add a value, let us say x no of steps to the starting array elements and subtract a value, lets say y no of steps from the last array elements to make all the elements equal, we just add the differences of nums[i] and nums[n-1-i].
+
+Let us see this with an example to understand it better.
+
+For, Array elements [0,0,1,6,8], we add some x to 0 and subtract some y from 8 to make them equal. We know that after this operation, the elements would become equal. Thus, we obtain an equation stating 0+x=8-y. When re-writing the equation, we obtain x+y=8-0. Here, we can see that we are just subtracting the last and first element of array. We do not need to find the values of x and y but instead we know that x+y are the steps that are required to make the array elements equal.
+
+Thus, Overall, after sorting the array just add the differences of first and last element one by one i.e. nums[i] and nums[n-1-i] from i =0 to i =n/2.
+
+So, if we just simply add the differences of nums[i] and nums[n-i-1] from i =0 to i =n/2 (Because after that elements will repeat), we will get the required output.
+
+Time Complexity : O(n logn) for sort + O(n/2) for loop = O(n logn),
+Space complexity : O(1)
+
+Let's see the code:
+
+		//Two pointer Approach
+        int n=nums.size();
+        //Sorting the array
+        sort(nums.begin(),nums.end());
+        //Left and Right Pointer for Iteration
+        int left=0,right=n-1;
+        int steps=0;
+        while(left<right)
+        {
+            steps+=nums[right]-nums[left];
+            left++;
+            right--;
+        }
+        return steps;
