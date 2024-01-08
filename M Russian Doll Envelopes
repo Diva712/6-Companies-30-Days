@@ -1,0 +1,75 @@
+You are given a 2D array of integers envelopes where envelopes[i] = [wi, hi] represents the width and the height of an envelope.
+
+One envelope can fit into another if and only if both the width and height of one envelope are greater than the other envelope's width and height.
+
+Return the maximum number of envelopes you can Russian doll (i.e., put one inside the other).
+
+Note: You cannot rotate an envelope.
+
+ 
+
+Example 1:
+
+Input: envelopes = [[5,4],[6,4],[6,7],[2,3]]
+Output: 3
+Explanation: The maximum number of envelopes you can Russian doll is 3 ([2,3] => [5,4] => [6,7]).
+Example 2:
+
+Input: envelopes = [[1,1],[1,1],[1,1]]
+Output: 1
+
+
+Points : you should be aware of LIS
+
+class Solution {
+public:
+    static bool comp (vector<int>&a , vector<int>&b){
+        if(a[0] < b[0]){
+            return true;
+        }
+
+        if(a[0] == b[0]){
+            return a[1] > b[1];
+        }
+
+        return false;
+    }
+    int binary_search(vector<int>&temp , int x){
+        int low = 0;
+        int high = temp.size()-1;
+        int ans = 0;
+        while(low <= high){
+            int mid = (low + high)/2;
+            if(temp[mid] == x){
+                return mid;
+            }
+
+            if(temp[mid] < x){
+                low = mid+1;
+            }
+            else{
+                ans = mid;
+                high = mid-1;
+            }
+        }
+
+        return ans;
+    }
+    int maxEnvelopes(vector<vector<int>>& envelopes) {
+        sort(envelopes.begin() , envelopes.end() ,  comp);
+        vector<int>temp;
+        temp.push_back(envelopes[0][1]);
+        for(int i=1 ; i<envelopes.size() ; i++){
+            if(temp.back() < envelopes[i][1]){
+                temp.push_back(envelopes[i][1]);
+            }
+            else{
+                int index = binary_search(temp , envelopes[i][1]);
+                temp[index] = envelopes[i][1];
+            }
+        }
+
+        return temp.size();
+
+    }
+};
