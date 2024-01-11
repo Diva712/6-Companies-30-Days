@@ -1,0 +1,90 @@
+Given the root of a binary tree, the value of a target node target, and an integer k, return an array of the values of all nodes that have a distance k from the target node.
+
+You can return the answer in any order.
+
+ 
+
+Example 1:
+
+
+Input: root = [3,5,1,6,2,0,8,null,null,7,4], target = 5, k = 2
+Output: [7,4,1]
+Explanation: The nodes that are a distance 2 from the target node (with value 5) have values 7, 4, and 1.
+Example 2:
+
+Input: root = [1], target = 1, k = 3
+Output: []
+
+
+Solution :
+/**
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *     int val;
+ *     TreeNode *left;
+ *     TreeNode *right;
+ *     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    void inorder(TreeNode*root , unordered_map<TreeNode* , TreeNode*>&parent){
+        if(root == NULL){
+            return ;
+        }
+        if(root->left!=NULL)
+            parent[root->left] = root;
+        inorder(root->left , parent);
+
+        if(root->right!=NULL)
+            parent[root->right] = root;
+        inorder(root->right , parent);
+    }
+    void solve(TreeNode*root , unordered_map<TreeNode* , TreeNode*>&parent ,vector<int>&ans , int k){
+        unordered_set<int>visited;
+        queue<TreeNode*>q;
+        q.push(root);
+        visited.insert(root->val);
+
+        while(!q.empty()){
+            int n = q.size();
+            if(k == 0){
+                break;
+            }
+            while(n--){
+                TreeNode*node = q.front();
+                q.pop();
+
+                if(node->left!=NULL && !visited.count(node->left->val)){
+                    q.push(node->left);
+                    visited.insert(node->left->val);
+                }
+
+                if(node->right!=NULL && !visited.count(node->right->val)){
+                    q.push(node->right);
+                    visited.insert(node->right->val);
+                }
+
+                if(parent.count(node) && !visited.count(parent[node]->val)){
+                    q.push(parent[node]);
+                    visited.insert(parent[node]->val);
+                }
+            }
+            k--;
+        }
+
+        while(!q.empty()){
+            TreeNode*node = q.front();
+            q.pop();
+            ans.push_back(node->val);
+        }
+
+    }
+    vector<int> distanceK(TreeNode* root, TreeNode* target, int k) {
+        unordered_map<TreeNode* , TreeNode*>parent;
+        inorder(root , parent);
+        vector<int>ans;
+        solve(target , parent , ans,k);
+        return ans;
+    }
+};
