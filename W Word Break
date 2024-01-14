@@ -1,0 +1,64 @@
+Given a string s and a dictionary of strings wordDict, return true if s can be segmented into a space-separated sequence of one or more dictionary words.
+
+Note that the same word in the dictionary may be reused multiple times in the segmentation.
+
+ 
+
+Example 1:
+
+Input: s = "leetcode", wordDict = ["leet","code"]
+Output: true
+Explanation: Return true because "leetcode" can be segmented as "leet code".
+Example 2:
+
+Input: s = "applepenapple", wordDict = ["apple","pen"]
+Output: true
+Explanation: Return true because "applepenapple" can be segmented as "apple pen apple".
+Note that you are allowed to reuse a dictionary word.
+Example 3:
+
+Input: s = "catsandog", wordDict = ["cats","dog","sand","and","cat"]
+Output: false
+
+Point:
+1. think to segment to each substring .
+2. recursive approach.
+
+Solution:
+class Solution {
+public:
+    unordered_set<string>st;
+    int n ;
+    bool solve(int ind , string& s , vector<int>&dp){
+
+        if(ind >= n){
+            return true;
+        }
+
+        if(dp[ind]!=-1){
+            return dp[ind];
+        }
+
+        if(st.find(s)!=st.end()){
+            return true;
+        }
+
+        for(int len = 1 ; len<=n ; len++){
+
+            string temp = s.substr(ind , len);
+            if(st.find(temp)!=st.end() && solve(ind+len , s , dp)){
+                return dp[ind] = true;
+            }
+        }
+        return dp[ind] = false;
+    }
+    bool wordBreak(string s, vector<string>& wordDict) {
+        n = s.size();
+        vector<int>dp(n+1 , -1);
+        for(auto it : wordDict){
+            st.insert(it);
+        }
+
+        return solve(0 , s , dp);
+    }
+};
