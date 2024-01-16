@@ -1,0 +1,52 @@
+Given the root of a binary search tree and the lowest and highest boundaries as low and high, trim the tree so that all its elements lies in [low, high]. Trimming the tree should not change the relative structure of the elements that will remain in the tree (i.e., any node's descendant should remain a descendant). It can be proven that there is a unique answer.
+
+Return the root of the trimmed binary search tree. Note that the root may change depending on the given bounds.
+
+ 
+
+Example 1:
+
+
+Input: root = [1,0,2], low = 1, high = 2
+Output: [1,null,2]
+Example 2:
+
+
+Input: root = [3,0,4,null,2,null,null,1], low = 1, high = 3
+Output: [3,2,null,1]
+
+
+Point :
+1. we have to observe that  , for root->>left->value is less than low than we shold go for right of root;
+2. we have to observe that  ,  for root->>right->val is grater than high than we shold go for left of root;
+3. when a root value is less than and equal to high and greater than equal to left than we go to lef tand right both and assign left answer to root->left and right answer to  the root right.
+
+Solution:
+class Solution {
+public:
+    TreeNode* trimBST(TreeNode* root, int low, int high) {
+        if(root == NULL){
+            return NULL;
+        }
+
+        if(root->val < low ){
+            TreeNode*right_node = trimBST(root->right , low , high);
+            return right_node;
+        }
+
+       else if(root->val > high){
+            TreeNode*left_node = trimBST(root->left , low , high);
+            return left_node;
+        }
+        else{
+
+            TreeNode*left_node = trimBST(root->left , low , high);
+            TreeNode*right_node = trimBST(root->right , low ,high);
+            root->left = left_node;
+            root->right = right_node;
+        }
+
+        return root;
+        
+    }
+};
