@@ -1,0 +1,108 @@
+There is a grid with n + 2 horizontal bars and m + 2 vertical bars, and initially containing 1 x 1 unit cells.
+
+The bars are 1-indexed.
+
+You are given the two integers, n and m.
+
+You are also given two integer arrays: hBars and vBars.
+
+hBars contains distinct horizontal bars in the range [2, n + 1].
+vBars contains distinct vertical bars in the range [2, m + 1].
+You are allowed to remove bars that satisfy any of the following conditions:
+
+If it is a horizontal bar, it must correspond to a value in hBars.
+If it is a vertical bar, it must correspond to a value in vBars.
+Return an integer denoting the maximum area of a square-shaped hole in the grid after removing some bars (possibly none).
+
+ 
+
+Example 1:
+
+
+
+Input: n = 2, m = 1, hBars = [2,3], vBars = [2]
+Output: 4
+Explanation: The left image shows the initial grid formed by the bars.
+The horizontal bars are in the range [1,4], and the vertical bars are in the range [1,3].
+It is allowed to remove horizontal bars [2,3] and the vertical bar [2].
+One way to get the maximum square-shaped hole is by removing horizontal bar 2 and vertical bar 2.
+The resulting grid is shown on the right.
+The hole has an area of 4.
+It can be shown that it is not possible to get a square hole with an area more than 4.
+Hence, the answer is 4.
+
+
+Solution :
+
+Points :
+
+find the maximum length and breadth i.e. horizontal gap b/w bars and vertical gap b/w bars.
+find the minimum of length and breadth which will be the side of the required SQUARE.
+Approach
+Sort both hBars and vBars.
+Set left=1, right=left+1. Gap=right-left (minimum gap in case no bar can be removed will be 1)
+Traverse in vertical bars. If the vBars[i]!=right (to check whether our bars are consecutive or not. If they are not consecutive, we cannot increase the width directly because there may be bars in between), then we update left as vBars[i]-1 and right as vBars[i]+1. Otherwise we'll only update the right bar.
+Update length if the gap obtained is greater than the previous length.
+Repeat the above steps for horizontal bars as well in order to find the maximum gap or breadth.
+Side of the square will be minimum of length and breadth. Return side*side (area of the req square).
+Example: n=2, m=4, hBars=[2,3], vBars=[2,4,5]
+
+1________2________3________4________5________6
+|________|________|________|________|________|
+|________|________|________|________|________|
+|________|________|________|________|________|
+|________|________|________|________|________|
+Let l=1, r=l+1=2, length=1
+Traversing in vBars:
+v=2 (consecutive bar so left need not be updated) i.e. r=v+1=3
+length=min(1,(3-1))=2
+
+v=4 (it is not consecutive, we have bar no. 3 in between so we cannot directly update the right. Otherwise the gap will become 4, but actually it will be 2 if we remove bar no. 4).
+So, we update l=v-1=3, r=v+1=5. length=min(2, (5-2))=2.
+
+v=5 (consecutive so only updating the value of right) r=v+1=6
+length=min(2,(6-3))=3.
+
+1________2________3________4________5________6
+|_________________|__________________________|
+|_________________|__________________________|
+|_________________|__________________________|
+|_________________|__________________________|
+similarly max gap for horizontal bars can be calculated. (that will be 4)
+
+side of the square with maximum area will be :
+min(max horizontal gap, max vertical gap)
+
+class Solution {
+public:
+    int maximizeSquareHoleArea(int n, int m, vector<int>& hBars, vector<int>& vBars) {
+        sort(hBars.begin() , hBars.end());
+        sort(vBars.begin() , vBars.end());
+
+        int max_h_len = 1;
+        int curr_h_len = 1;
+        for(int i=0; i<hBars.size()-1 ; i++){
+            if(hBars[i] + 1 == hBars[i+1]){
+                curr_h_len++;
+            }
+            else{
+                curr_h_len = 1;
+            }
+            max_h_len = max(max_h_len , curr_h_len);
+        }
+
+        int max_v_len = 1;
+        int curr_v_len = 1;
+        for(int i=0; i<vBars.size()-1 ; i++){
+            if(vBars[i] + 1 == vBars[i+1]){
+                curr_v_len++;
+            }
+            else{
+                curr_v_len = 1;
+            }
+            max_v_len = max(max_v_len , curr_v_len);
+        }
+        int len = min(max_v_len , max_h_len) + 1;
+        return len*len;
+    }
+};
